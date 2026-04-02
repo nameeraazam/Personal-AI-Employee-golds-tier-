@@ -1,0 +1,196 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Facebook Token Setup Helper
+Guides you through getting Facebook Graph API credentials
+"""
+
+import webbrowser
+import json
+from pathlib import Path
+
+# Facebook URLs
+FACEBOOK_DEV_URL = "https://developers.facebook.com/tools/explorer/"
+FACEBOOK_APP_DASHBOARD = "https://developers.facebook.com/apps/"
+FACEBOOK_TOKEN_DEBUGGER = "https://developers.facebook.com/tools/debug/access_token/"
+
+# Required permissions
+PERMISSIONS = [
+    {"name": "pages_show_list", "description": "View list of pages you manage"},
+    {"name": "read_page_mailboxes", "description": "Read page messages"},
+    {"name": "pages_read_engagement", "description": "Read page posts, comments, insights"},
+    {"name": "pages_read_user_content", "description": "Read user content on pages"},
+    {"name": "pages_manage_posts", "description": "Create and manage page posts"},
+    {"name": "pages_manage_engagement", "description": "Manage comments and engagement"},
+]
+
+def print_step(step_num, title):
+    print(f"\n{'='*60}")
+    print(f"STEP {step_num}: {title}")
+    print(f"{'='*60}")
+
+def main():
+    print("\n" + "="*60)
+    print("  FACEBOOK GRAPH API - SETUP WIZARD")
+    print("  Gold Tier FTE Integration")
+    print("="*60)
+    
+    # Step 1: Open Graph API Explorer
+    print_step(1, "Open Facebook Graph API Explorer")
+    print("\nOpening Facebook Graph API Explorer in your browser...")
+    webbrowser.open(FACEBOOK_DEV_URL)
+    
+    print("\n📋 Instructions:")
+    print("   1. If prompted, log in to your Facebook account")
+    print("   2. Click 'Add a New App' if you don't have one")
+    print("   3. Select 'Business' as app type")
+    print("   4. Fill in:")
+    print("      - App Name: Gold Tier FTE Integration")
+    print("      - App Contact Email: your email")
+    print("   5. Click 'Create App'")
+    
+    input("\n   Press ENTER when you've created/select your app...")
+    
+    # Step 2: Add Permissions
+    print_step(2, "Add Required Permissions")
+    print("\n📋 Add these permissions using 'Add a Permission' button:")
+    print()
+    
+    for i, perm in enumerate(PERMISSIONS, 1):
+        print(f"   {i}. {perm['name']}")
+        print(f"      → {perm['description']}")
+    
+    print("\n💡 Tip: Click 'Add a Permission' button and search for each permission")
+    
+    input("\n   Press ENTER when you've added all permissions...")
+    
+    # Step 3: Generate Token
+    print_step(3, "Generate User Access Token")
+    print("\n📋 Instructions:")
+    print("   1. Click 'Get Token' button (top of page)")
+    print("   2. Select 'Get User Access Token'")
+    print("   3. Check ALL 6 permissions in the list")
+    print("   4. Click 'Generate Token'")
+    print("   5. Facebook will show permission dialog")
+    print("   6. Click 'Continue as [Your Name]'")
+    print("   7. Click 'Done' or 'OK'")
+    
+    input("\n   Press ENTER when you've generated the token...")
+    
+    # Step 4: Copy Token
+    print_step(4, "Copy Your Access Token")
+    print("\n📋 Instructions:")
+    print("   1. Your Access Token will appear in the 'Access Token' field")
+    print("   2. Click the copy icon (📋) next to the token")
+    print("   3. Paste it somewhere safe temporarily")
+    
+    user_token = input("\n   Paste your User Access Token here (for validation): ").strip()
+    
+    if len(user_token) < 50:
+        print("\n   ⚠️  Warning: Token seems too short. Double-check!")
+    else:
+        print("\n   ✅ Token looks valid!")
+    
+    # Step 5: Get Page ID
+    print_step(5, "Get Your Page ID and Page Access Token")
+    print("\n📋 Instructions:")
+    print("   1. In Graph API Explorer query box, enter: /me/accounts")
+    print("   2. Click 'Submit'")
+    print("   3. You'll see a response like:")
+    print("""
+      {
+        "data": [
+          {
+            "name": "Your Page Name",
+            "id": "123456789012345",
+            "access_token": "page_access_token_here"
+          }
+        ]
+      }
+   """)
+    print("   4. Copy the 'id' → This is your FACEBOOK_PAGE_ID")
+    print("   5. Copy the 'access_token' → This is your Page Access Token")
+    
+    page_id = input("\n   Enter your Page ID: ").strip()
+    page_token = input("   Enter your Page Access Token: ").strip()
+    
+    # Step 6: Get App Credentials
+    print_step(6, "Get App ID and App Secret")
+    print("\n📋 Instructions:")
+    print("   1. Opening Facebook App Dashboard...")
+    print("   2. Select your app")
+    print("   3. Go to 'Settings' → 'Basic'")
+    print("   4. Copy 'App ID' and 'App Secret'")
+    
+    webbrowser.open(FACEBOOK_APP_DASHBOARD)
+    
+    app_id = input("\n   Enter your App ID: ").strip()
+    app_secret = input("   Enter your App Secret: ").strip()
+    
+    # Step 7: Create .env file
+    print_step(7, "Create .env File")
+    print("\n📋 Creating your .env file...")
+    
+    env_content = f"""# Facebook Graph API Configuration
+# Generated by Facebook Setup Helper - Gold Tier FTE
+
+FACEBOOK_API_VERSION=v18.0
+FACEBOOK_ACCESS_TOKEN={page_token}
+FACEBOOK_PAGE_ID={page_id}
+FACEBOOK_APP_ID={app_id}
+FACEBOOK_APP_SECRET={app_secret}
+
+# Facebook Settings
+FACEBOOK_CHECK_INTERVAL=120
+FACEBOOK_HEADLESS=false
+FACEBOOK_MONITOR_COMMENTS=true
+FACEBOOK_MONITOR_MESSAGES=true
+FACEBOOK_MONITOR_POSTS=true
+
+# Auto-response (optional)
+FACEBOOK_AUTO_RESPONSE=false
+FACEBOOK_AUTO_RESPONSE_MESSAGE=Thank you for your message! We will get back to you soon.
+"""
+    
+    env_path = Path(__file__).parent / ".env"
+    
+    # Check if .env already exists
+    if env_path.exists():
+        backup_path = Path(__file__).parent / ".env.backup"
+        env_path.rename(backup_path)
+        print(f"\n   ⚠️  Existing .env backed up to: {backup_path}")
+    
+    with open(env_path, 'w') as f:
+        f.write(env_content)
+    
+    print(f"\n   ✅ .env file created at: {env_path}")
+    
+    # Step 8: Test Connection
+    print_step(8, "Test Your Configuration")
+    print("\n📋 Testing Facebook connection...")
+    
+    print("\n   Run this command to test:")
+    print("   python integrations\\facebook_integration.py --insights")
+    
+    print("\n" + "="*60)
+    print("  SETUP COMPLETE! 🎉")
+    print("="*60)
+    
+    print("\n📁 Files created:")
+    print(f"   - {env_path}")
+    
+    print("\n🔗 Useful Links:")
+    print(f"   - Graph API Explorer: {FACEBOOK_DEV_URL}")
+    print(f"   - App Dashboard: {FACEBOOK_APP_DASHBOARD}")
+    print(f"   - Token Debugger: {FACEBOOK_TOKEN_DEBUGGER}")
+    
+    print("\n✅ Next Steps:")
+    print("   1. Review your .env file")
+    print("   2. Run: python integrations\\facebook_integration.py --insights")
+    print("   3. If successful, run: python scripts\\gold_tier_orchestrator.py --start")
+    
+    print("\n" + "="*60)
+
+
+if __name__ == '__main__':
+    main()

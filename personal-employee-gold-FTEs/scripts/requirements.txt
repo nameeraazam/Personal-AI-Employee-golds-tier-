@@ -1,0 +1,56 @@
+# Gold Tier FTE - Requirements
+# Personal AI Employee - Gold Tier
+# Facebook Integration: Graph API ONLY (no browser automation)
+
+# =============================================================================
+# CORE DEPENDENCIES
+# =============================================================================
+
+# Environment Variables
+python-dotenv>=1.0.0
+
+# HTTP Requests (for Facebook Graph API)
+requests>=2.31.0
+
+# =============================================================================
+# ODOO INTEGRATION
+# =============================================================================
+
+# XML-RPC client for Odoo (built-in, no install needed)
+# xmlrpc.client is part of Python standard library
+
+# =============================================================================
+# UTILITIES (Python Standard Library)
+# =============================================================================
+
+# These are built-in - no installation needed:
+# - json
+# - hashlib
+# - re (regex)
+# - datetime
+# - pathlib
+# - threading
+# - time
+
+# =============================================================================
+# OPTIONAL DEPENDENCIES
+# =============================================================================
+
+# For enhanced logging
+# colorlog>=6.7.0
+
+# For scheduled tasks
+# schedule>=1.2.0
+
+# =============================================================================
+# INSTALLATION
+# =============================================================================
+# 
+# Basic install:
+#   pip install -r scripts/requirements.txt
+#
+# Docker setup (for Odoo):
+#   docker-compose -f odoo-docker/docker-compose.yml up -d
+#
+# NOTE: Playwright is NOT required - Facebook uses Graph API only
+# =============================================================================

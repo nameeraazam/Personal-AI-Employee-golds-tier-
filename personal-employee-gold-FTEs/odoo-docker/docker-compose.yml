@@ -1,0 +1,118 @@
+version: '3.8'
+
+services:
+  # Odoo ERP - Main Application
+  odoo:
+    image: odoo:17.0
+    container_name: gold-tier-odoo
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "8069:8069"
+    volumes:
+      - odoo-web-data:/var/lib/odoo
+      - ./odoo-custom-addons:/mnt/extra-addons
+      - ./odoo-config:/etc/odoo
+      - ./odoo-logs:/var/log/odoo
+    environment:
+      - HOST=postgres
+      - USER=odoo
+      - PASSWORD=${ODOO_DB_PASSWORD:-odoo_secret_password}
+      - ADMIN_PASSWORD=${ODOO_ADMIN_PASSWORD:-admin_secret_123}
+    command: --dev --workers=2 --max-cron-threads=1
+    restart: unless-stopped
+    networks:
+      - gold-tier-network
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: gold-tier-odoo-db
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=odoo_secret_password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./odoo-backups:/backups
+      - ./postgres-init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    networks:
+      - gold-tier-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo -h localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for Caching
+  redis:
+    image: redis:7-alpine
+    container_name: gold-tier-odoo-redis
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - gold-tier-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # PgAdmin for Database Management (Optional)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: gold-tier-odoo-pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL:-admin@example.com}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD:-admin_secret_123}
+      - PGADMIN_CONFIG_SERVER_MODE=False
+      - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    networks:
+      - gold-tier-network
+
+  # Nginx Reverse Proxy (Optional - for production)
+  nginx:
+    image: nginx:alpine
+    container_name: gold-tier-odoo-nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/odoo.conf:/etc/nginx/conf.d/odoo.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - odoo
+    restart: unless-stopped
+    networks:
+      - gold-tier-network
+    profiles:
+      - production
+
+volumes:
+  odoo-web-data:
+    driver: local
+  postgres-data:
+    driver: local
+  redis-data:
+    driver: local
+  pgadmin-data:
+    driver: local
+
+networks:
+  gold-tier-network:
+    driver: bridge

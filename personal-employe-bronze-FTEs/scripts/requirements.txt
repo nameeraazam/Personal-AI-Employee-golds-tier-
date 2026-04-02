@@ -1,0 +1,10 @@
+# LinkedIn Watcher - Silver Tier Requirements
+
+# Browser Automation
+playwright>=1.40.0
+
+# Environment Variables
+python-dotenv>=1.0.0
+
+# Install browsers after installing requirements:
+# playwright install

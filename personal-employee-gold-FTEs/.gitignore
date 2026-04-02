@@ -1,0 +1,147 @@
+# Gold Tier FTE - Git Ignore
+
+# =============================================================================
+# SENSITIVE FILES (Never commit these)
+# =============================================================================
+
+# Environment files with credentials
+.env
+.env.local
+.env.production
+
+# Session files
+*_session.json
+linkedin_session.json
+facebook_session.json
+
+# Credentials
+credentials.json
+service_account.json
+*.key
+*.pem
+
+# =============================================================================
+# LOGS AND DATA
+# =============================================================================
+
+# Log files
+*.log
+AI_Employee_Vault/Logs/*.log
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.bak
+*.backup
+odoo-backups/*.dump
+
+# =============================================================================
+# GENERATED FILES
+# =============================================================================
+
+# Action items (optional - commit if you want history)
+Needs_Action/*.md
+
+# Sync data
+sync-data/
+odoo-sync/
+
+# =============================================================================
+# PYTHON
+# =============================================================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# PyInstaller
+*.manifest
+*.spec
+
+# =============================================================================
+# IDE
+# =============================================================================
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+
+# Other
+*.swp
+*.swo
+*~
+
+# =============================================================================
+# DOCKER
+# =============================================================================
+
+# Docker volumes (if created locally)
+odoo-web-data/
+postgres-data/
+redis-data/
+pgadmin-data/
+
+# Docker override files
+docker-compose.override.yml
+docker-compose.local.yml
+
+# =============================================================================
+# OS
+# =============================================================================
+
+# Windows
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+# =============================================================================
+# OPTIONAL - Commit if you want to track
+# =============================================================================
+
+# Custom Odoo addons (if you create any)
+# odoo-custom-addons/
+
+# Nginx SSL certificates (if using production profile)
+# nginx/ssl/
+
+# =============================================================================

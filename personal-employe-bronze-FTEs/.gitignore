@@ -1,0 +1,68 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Environment variables
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Session files
+*.json
+!package.json
+!tsconfig.json
+
+# Logs
+*.log
+linkedin_watcher.log
+
+# Obsidian
+.obsidian/
+
+# Python test files
+test_*.py
+*_test.py
+
+# Credentials
+credentials.json
+
+# Temporary files
+*.tmp
+*.bak
+
+# Node modules (if any)
+node_modules/
+
+# Build outputs
+dist/
+build/
