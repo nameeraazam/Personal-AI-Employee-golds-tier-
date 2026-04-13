@@ -60,9 +60,17 @@ credentials.json
 *.tmp
 *.bak
 
-# Node modules (if any)
+# Node modules
 node_modules/
 
 # Build outputs
 dist/
 build/
+
+# ✅ VAULT FOLDERS - contain real personal data, never commit
+**/Needs_Action/
+**/Done/
+**/Pending_Approval/
+**/Approved/
+**/Briefings/
+**/Logs/
